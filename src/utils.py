@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 matplotlib.style.use('ggplot')
 
 
-def save_model(epochs, model, optimizer, criterion, pretrained):
+def save_model(epochs, model, optimizer, criterion, pretrained, name):
     """
     Function to save the trained model to disk.
     """
@@ -14,10 +14,10 @@ def save_model(epochs, model, optimizer, criterion, pretrained):
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': criterion,
-    }, f"../outputs/model_pretrained_{pretrained}.pth")
+    }, f"../outputs/model_pretrained_{pretrained}_{name}.pth")
 
 
-def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained):
+def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name):
     """
     Function to save the loss and accuracy plots to disk.
     """
@@ -34,7 +34,7 @@ def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained):
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.savefig(f"../outputs/accuracy_pretrained_{pretrained}.png")
+    plt.savefig(f"../outputs/accuracy_pretrained_{pretrained}_{name}.png")
 
     # loss plots
     plt.figure(figsize=(10, 7))
@@ -49,4 +49,4 @@ def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig(f"../outputs/loss_pretrained_{pretrained}.png")
+    plt.savefig(f"../outputs/loss_pretrained_{pretrained}_{name}.png")

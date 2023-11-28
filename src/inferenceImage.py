@@ -6,23 +6,24 @@ import os
 from model import build_model
 from torchvision import transforms
 # Constants.
-DATA_PATH = '../input/tests'
+DATA_PATH = '../input/test'
 IMAGE_SIZE = 224
-DEVICE = 'cpu'
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 # Class names.
 class_names = ['non_person', 'person']
 # Load the trained model.
 model = build_model(pretrained=False, fine_tune=False, num_classes=2)
-checkpoint = torch.load('../outputs/model_pretrained_True.pth', map_location=DEVICE)
+checkpoint = torch.load('../outputs/model_pretrained_True_prueba2.pth', map_location=DEVICE)
 print('Loading trained model weights...')
 model.load_state_dict(checkpoint['model_state_dict'])
+model.to(DEVICE)
 
 # Get all the test image paths.
-all_image_paths = glob.glob(f"{DATA_PATH}/*")
+all_image_paths = glob.glob(f"{DATA_PATH}/*/*.jpg")
 # Iterate over all the images and do forward pass.
 for image_path in all_image_paths:
     # Get the ground truth class name from the image path.
-    gt_class_name = image_path.split(os.path.sep)[-1].split('.')[0]
+    gt_class_name = image_path.split(os.path.sep)[-2]
     # Read the image and create a copy.
     image = cv2.imread(image_path)
     orig_image = image.copy()
@@ -42,10 +43,11 @@ for image_path in all_image_paths:
     image = torch.unsqueeze(image, 0)
     image = image.to(DEVICE)
 
-    # Forward pass throught the image.
+    # Forward pass through the image.
     outputs = model(image)
-    outputs = outputs.detach().numpy()
+    outputs = outputs.detach().cpu().numpy()
     pred_class_name = class_names[np.argmax(outputs[0])]
+    print(outputs[0])
     print(f"GT: {gt_class_name}, Pred: {pred_class_name.lower()}")
     # Annotate the image with ground truth.
     cv2.putText(
