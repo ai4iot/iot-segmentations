@@ -15,9 +15,12 @@ class_names = ['non_person', 'person']
 
 # Load the trained model.
 model = build_model(pretrained=False, fine_tune=False, num_classes=2)
-checkpoint = torch.load('../outputs/model_pretrained_True.pth', map_location=DEVICE)
-print('Loading trained model weights...')
+checkpoint = torch.load('../weights/model_pretrained_True_prueba4A.pt', map_location=DEVICE)
 model.load_state_dict(checkpoint['model_state_dict'])
+
+model.eval()
+print('Loading trained model weights...')
+
 
 # Lists to store ground truth and predicted labels.
 true_labels = []
@@ -59,6 +62,7 @@ for image_path in all_image_paths:
         outputs = outputs.detach().numpy()
         pred_class_name = class_names[np.argmax(outputs[0])]
         predicted_labels.append(class_names.index(pred_class_name.lower()))
+        #print('GT: ' + gt_class_name + ' Pred: ' + pred_class_name)
 
     except Exception as e:
         print(f"Error al procesar la imagen {image_path}: {str(e)}")
