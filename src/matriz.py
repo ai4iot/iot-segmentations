@@ -3,7 +3,9 @@ import cv2
 import numpy as np
 import glob as glob
 import os
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib
+from matplotlib import pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, precision_score, recall_score, f1_score
 from model import build_model
 from torchvision import transforms
 
@@ -15,7 +17,7 @@ class_names = ['non_person', 'person']
 
 # Load the trained model.
 model = build_model(pretrained=False, fine_tune=False, num_classes=2)
-checkpoint = torch.load('../weights/model_pretrained_True_prueba4A.pt', map_location=DEVICE)
+checkpoint = torch.load('../weights/model_pretrained_True_prueba2.pth', map_location=DEVICE)
 model.load_state_dict(checkpoint['model_state_dict'])
 
 model.eval()
@@ -71,5 +73,16 @@ for image_path in all_image_paths:
 conf_matrix = confusion_matrix(true_labels, predicted_labels)
 print("Confusion Matrix:")
 print(conf_matrix)
-disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix)
-disp.plot()
+disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=['non_person', 'person'])
+disp.plot(cmap='Greens', values_format='d')
+matplotlib.pyplot.show()
+
+precision = precision_score(true_labels, predicted_labels)
+recall = recall_score(true_labels, predicted_labels)
+f1 = f1_score(true_labels, predicted_labels)
+
+print('Precision: ' + str(precision))
+print('Recall: ' + str(recall))
+print('F1: ' + str(f1))
+
+

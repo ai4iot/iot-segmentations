@@ -14,7 +14,8 @@ def save_model(epochs, model, optimizer, criterion, pretrained, name):
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': criterion,
-    }, f"../outputs/model_pretrained_{pretrained}_{name}.pth")
+    }, f"/home/ams/Documents/pesos/model_pretrained_{pretrained}_{name}.pt")
+    torch.save(model, f"/home/ams/Documents/pesos/model_model{pretrained}_{name}.pt")
 
 
 def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name):
