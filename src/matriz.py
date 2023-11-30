@@ -21,15 +21,12 @@ model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
 print('Loading trained model weights...')
 
-
 # Lists to store ground truth and predicted labels.
 true_labels = []
 predicted_labels = []
 
 # Get all the test image paths.
 all_image_paths = glob.glob(f"{DATA_PATH}/*/*.jpg")
-
-
 
 # Iterate over all the images and do forward pass.
 for image_path in all_image_paths:
@@ -62,7 +59,7 @@ for image_path in all_image_paths:
         outputs = outputs.detach().numpy()
         pred_class_name = class_names[np.argmax(outputs[0])]
         predicted_labels.append(class_names.index(pred_class_name.lower()))
-        #print('GT: ' + gt_class_name + ' Pred: ' + pred_class_name)
+        # print('GT: ' + gt_class_name + ' Pred: ' + pred_class_name)
 
     except Exception as e:
         print(f"Error al procesar la imagen {image_path}: {str(e)}")
