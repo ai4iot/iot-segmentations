@@ -10,7 +10,7 @@ from utils import save_model, save_plots
 # construct the argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    '-e', '--epochs', type=int, default=100,
+    '-e', '--epochs', type=int, default=10,
     help='Number of epochs to train our network for'
 )
 parser.add_argument(
@@ -20,7 +20,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '-lr', '--learning-rate', type=float,
-    dest='learning_rate', default=0.00001,
+    dest='learning_rate', default=0.0001,
     help='Learning rate for training the model'
 )
 args = vars(parser.parse_args())
@@ -89,7 +89,7 @@ def validate(model, testloader, criterion):
 
 if __name__ == '__main__':
     # Load the training and validation datasets.
-    namesito = 'prueba3'
+    namesito = 'prueba4A'
     dataset_train, dataset_valid, dataset_classes = get_datasets(args['pretrained'])
     print(f"[INFO]: Number of training images: {len(dataset_train)}")
     print(f"[INFO]: Number of validation images: {len(dataset_valid)}")
