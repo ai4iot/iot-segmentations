@@ -32,6 +32,32 @@ Caption: Illustrating the variation of the loss function throughout the training
 ![Confusion Matrix](figures/confmatrix.png)
 
 Caption: Confusion matrix depicting the model's performance on the test dataset.
+Total accuracy: 0.95
+
+### Summary of results
+
+Confusion Matrix:
+
+|            | non_person | person | 
+|------------|------------|--------|
+| non_person | 129        | 2      | 
+| person     | 11         | 179    | 
+
+Precision per class:
+
+|            | non_person | person | 
+|------------|------------|--------|
+| non_person | 98,47 %    | 1.53 % | 
+| person     | 5.8 %      | 95.2 % | 
+
+Total precision, f1-score and recall:  
+This metrics are calculated using sklearn.metrics library.
+
+|        | precision | recall | f1-score |
+|--------|-----------|--------|----------|
+| Total  | 0.994     | 0.931  | 0.961    |
+
+
 
 ## Data
 

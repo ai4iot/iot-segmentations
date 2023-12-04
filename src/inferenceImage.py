@@ -13,10 +13,11 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 class_names = ['non_person', 'person']
 # Load the trained model.
 model = build_model(pretrained=False, fine_tune=False, num_classes=2)
-checkpoint = torch.load('../weights/model_pretrained_True_prueba4A.pt', map_location=DEVICE)
+checkpoint = torch.load('../weights/model_pretrained_True_prueba2.pth', map_location=DEVICE)
 print('Loading trained model weights...')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(DEVICE)
+print(model.eval())
 model.eval()
 
 # Get all the test image paths.
