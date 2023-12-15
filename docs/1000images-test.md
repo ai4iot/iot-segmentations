@@ -44,6 +44,16 @@ For the metrics we are going to use the following:
 | person            | 597    | 3         |
 | nonperson         | 39     | 361       |
 
+### ResNet18
+- **Accuracy** 97.1%
+- **F1 Score:** 0.96
+- **Confusion Matrix:**
+
+| Actual/Predicted | person | nonperson |
+|-------------------|--------|-----------|
+| person            | 571    | 29        |
+| nonperson         | 0      | 400       |
+
 
 
 

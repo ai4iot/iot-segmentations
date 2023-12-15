@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 matplotlib.style.use('ggplot')
 
 
-def save_model(epochs, model, optimizer, criterion, pretrained, name):
+def save_model(epochs, model, optimizer, criterion, pretrained, name, model_name):
     """
     Function to save the trained model to disk.
     """
@@ -14,11 +14,11 @@ def save_model(epochs, model, optimizer, criterion, pretrained, name):
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': criterion,
-    }, f"/home/ams/Documents/pesos/model_pretrained_{pretrained}_{name}.pt")
-    torch.save(model, f"/home/ams/Documents/pesos/model_model{pretrained}_{name}.pt")
+    }, f"/home/ams/Documents/pesos/{model_name}_pretrained_{pretrained}_{name}.pt")
+    torch.save(model, f"/home/ams/Documents/pesos/{model_name}_model{pretrained}_{name}.pt")
 
 
-def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name):
+def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name, model_name):
     """
     Function to save the loss and accuracy plots to disk.
     """
@@ -35,7 +35,7 @@ def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name):
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.savefig(f"../outputs/accuracy_pretrained_{pretrained}_{name}.png")
+    plt.savefig(f"../outputs/accuracy_{model_name}_pretrained_{pretrained}_{name}.png")
 
     # loss plots
     plt.figure(figsize=(10, 7))
@@ -50,4 +50,4 @@ def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig(f"../outputs/loss_pretrained_{pretrained}_{name}.png")
+    plt.savefig(f"../outputs/loss_{model_name}_pretrained_{pretrained}_{name}.png")

@@ -7,15 +7,24 @@ import matplotlib
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, precision_score, recall_score, f1_score
 from model import build_model
 from torchvision import transforms
+import argparse
 
 # Constants.
-DATA_PATH = '../input/test'
+DATA_PATH = '../input/test/esp-camera'
 IMAGE_SIZE = 224
 DEVICE = 'cpu'
 class_names = ['non_person', 'person']
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '-m', '--model-name', type=str, default='efficientnet_b0',
+    dest='model-name', help='Model to use for training: efficientnet_b0, resnet18'
+)
+
+args = vars(parser.parse_args())
+
 # Load the trained model.
-model = build_model(pretrained=False, fine_tune=False, num_classes=2)
+model = build_model(pretrained=False, fine_tune=False, num_classes=len(class_names), model_name=args['model-name'])
 checkpoint = torch.load('../weights/model_pretrained_True_prueba2.pth', map_location=DEVICE)
 model.load_state_dict(checkpoint['model_state_dict'])
 
@@ -27,7 +36,7 @@ true_labels = []
 predicted_labels = []
 
 # Get all the test image paths.
-all_image_paths = glob.glob(f"{DATA_PATH}/*/*.jpg")
+all_image_paths = glob.glob(f"{DATA_PATH}/*/*.jpeg")
 
 # Iterate over all the images and do forward pass.
 for image_path in all_image_paths:
