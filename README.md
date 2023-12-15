@@ -1,91 +1,110 @@
-### Code for the project "Predicting humans presence using ESP-32"
-
-# Predicting Humans Presence with ESP-32
+# Person Detection Project
 
 ## Overview
 
-This project utilizes an ESP-32 microcontroller to predict human presence.
-The machine learning model is based on the EfficientNet architecture, 
-fine-tuned to classify two classes: `non_person` and `person`.
+This project aims to explore and compare different models for person detection.
+The current implementations include EfficientNet_B0 and ResNet18. MobileNetV2 is also included for comparison purposes, 
+but at the moment it is not an option in the parameters. You can use it in 
+[person-detection-esp32s3](https://github.com/curso-verano-iot-uah/person-detection-esp32s3)
+The goal is to evaluate the performance of these models in terms of accuracy, speed, and resource requirements.
+In the future, more models will be added to further expand the analysis and options.  
+  
 
-## Model Fine-tuning
+* [Models results and comparison](#models-results-and-comparison)
+* [Future Models](#future-models)
+* [Getting Started](#getting-started)
+* [Usage](#usage)
 
-The EfficientNet model was fine-tuned over 50 epochs using a training dataset of 800 images. 
-
-
-
-
-## Results
-
-### Accuracy Graph
-
-![Accuracy Graph](figures/accuracy_pretrained_True_prueba2.png)
-
-Caption: Displaying the accuracy of the model during training and validation.
-
-### Loss Function Graph
-
-![Loss Function Graph](figures/loss_pretrained_True_prueba2.png)
-
-Caption: Illustrating the variation of the loss function throughout the training process.
-
-### Confusion Matrix
-
-![Confusion Matrix](figures/confmatrix.png)
-
-Caption: Confusion matrix depicting the model's performance on the test dataset.
-Total accuracy: 0.95
-
-### Summary of results
-
-Confusion Matrix:
-
-|            | non_person | person | 
-|------------|------------|--------|
-| non_person | 129        | 2      | 
-| person     | 11         | 179    | 
-
-Precision per class:
-
-|            | non_person | person | 
-|------------|------------|--------|
-| non_person | 98,47 %    | 1.53 % | 
-| person     | 5.8 %      | 95.2 % | 
-
-Total precision, f1-score and recall:  
-This metrics are calculated using sklearn.metrics library.
-
-|        | precision | recall | f1-score |
-|--------|-----------|--------|----------|
-| Total  | 0.994     | 0.931  | 0.961    |
+## Models results and comparison
 
 
+### MobileNetV2
+- **Accuracy**  95.1%
+- **F1 Score:** 0.96
+- **Confusion Matrix:**
 
-## Data
+| Actual/Predicted | person | nonperson |
+|-------------------|--------|-----------|
+| person            | 564    | 36        |
+| nonperson         | 12     | 388       |
 
-All the images used for training, validation and testing are located in the `input` folder.
-Inside is the 'test' folder, which contains the images used for testing the model. 
-The 'person_dataset' contains the two clases with the images used for training and validation.
 
-## Usage
+### EfficientNet
+- **Accuracy** 95.8%
+- **F1 Score:** 0.96
+- **Confusion Matrix:**
+
+| Actual/Predicted | person | nonperson |
+|-------------------|--------|-----------|
+| person            | 597    | 3         |
+| nonperson         | 39     | 361       |
+
+### ResNet18
+- **Accuracy** 97.1%
+- **F1 Score:** 0.96
+- **Confusion Matrix:**
+
+| Actual/Predicted | person | nonperson |
+|-------------------|--------|-----------|
+| person            | 571    | 29        |
+| nonperson         | 0      | 400       |
+
+
+## Future Models
+
+In the future, additional models will be incorporated into the project to provide a broader 
+range of options for person detection. Contributions and suggestions for new models are welcome.
+
+## Dataset
+
+For training we have used the [person_dataset](input/person_dataset). Contains
+two classes (person and nonperson). It is made up with images from coco dataset and
+images taken grom an ESP32-CAM.  
+For testing we have used the [esp-camera](input/test/esp-camera). Contains 1000 images all taken 
+from an ESP32-CAM.
+
+## Getting Started
+
+To get started with this project, follow these steps:
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/curso-verano-iot-uah/efficient-net.git
-   
-2. Install the required packages:
+   git clone https://github.com/curso-verano-iot-uah/iot-segmentations.git
+   cd iot-segmentations/src
+   ```
+2. Create a conda environment:
 
    ```bash
    conda env create -f environment.yaml
    ```
-3. Activate the environment:
+   
+## Usage
 
-   ```bash
-   conda activate efficient-net
-   ```
-4. Run the confusion matrix script: to obtain the results of thes test dataset.
+### Training
 
-   ```bash
-   python ./src/confusion_matrix.py
-   ```
+For training, you can use the following command:
+```bash
+  python train.py -m <model_name> -e <epochs> -pt <pretrained> -lr <learning_rate> -n <name>
+```  
+
+- **model_name**: Name of the model to use. Currently, the options are: `efficientnet`and `resnet18`.
+- **epochs**: Number of epochs to train the model.
+- **pretrained**: Use a pretrained model. Options: `True` or `False`.
+- **learning_rate**: Learning rate to use in the training process.
+- **name**: Name of the model to save the weights and the results.
+
+### Testing
+
+You have to options for testing the models:
+
+1. Visualize each image with the predictions:      
+
+    ```bash
+    python inferenceImage.py -m <model_name> -w <weights_path>
+    ```
+2. Obtain all the metrics for the test dataset:
+
+    ```bash
+    python confusion_matrix.py -m <model_name> -w <weights_path>
+    ```
