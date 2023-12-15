@@ -4,7 +4,9 @@
 
 ## Overview
 
-This project utilizes an ESP-32 microcontroller to predict human presence. The machine learning model is based on the EfficientNet architecture, fine-tuned to classify two classes: `non_person` and `person`.
+This project utilizes an ESP-32 microcontroller to predict human presence.
+The machine learning model is based on the EfficientNet architecture, 
+fine-tuned to classify two classes: `non_person` and `person`.
 
 ## Model Fine-tuning
 

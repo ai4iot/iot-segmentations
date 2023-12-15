@@ -2,7 +2,6 @@ import torch
 import argparse
 import torch.nn as nn
 import torch.optim as optim
-import time
 from tqdm.auto import tqdm
 from model import build_model
 from datasets import get_datasets, get_data_loaders
@@ -23,6 +22,17 @@ parser.add_argument(
     dest='learning_rate', default=0.0001,
     help='Learning rate for training the model'
 )
+
+parser.add_argument(
+    '-m', '--model-name', type=str, default='efficientnet_b0',
+    dest='model-name', help='Model to use for training: efficientnet_b0, resnet18'
+)
+
+parser.add_argument(
+    '-n', '--name', type=str,
+    dest='name', help='Name used to store de results'
+)
+
 args = vars(parser.parse_args())
 
 
@@ -89,7 +99,6 @@ def validate(model, testloader, criterion):
 
 if __name__ == '__main__':
     # Load the training and validation datasets.
-    namesito = 'prueba4A'
     dataset_train, dataset_valid, dataset_classes = get_datasets(args['pretrained'])
     print(f"[INFO]: Number of training images: {len(dataset_train)}")
     print(f"[INFO]: Number of validation images: {len(dataset_valid)}")
@@ -106,7 +115,8 @@ if __name__ == '__main__':
     model = build_model(
         pretrained=args['pretrained'],
         fine_tune=True,
-        num_classes=len(dataset_classes)
+        num_classes=len(dataset_classes),
+        model_name=args['model-name']
     ).to(device)
 
     # Total parameters and trainable parameters.
@@ -138,7 +148,7 @@ if __name__ == '__main__':
         print('-' * 50)
 
     # Save the trained model weights.
-    save_model(epochs, model, optimizer, criterion, args['pretrained'], namesito)
+    save_model(epochs, model, optimizer, criterion, args['pretrained'], args['name'], args['model-name'])
     # Save the loss and accuracy plots.
-    save_plots(train_acc, valid_acc, train_loss, valid_loss, args['pretrained'], namesito)
+    save_plots(train_acc, valid_acc, train_loss, valid_loss, args['pretrained'], args['name'], args['model-name'])
     print('TRAINING COMPLETE')
