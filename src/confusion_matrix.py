@@ -21,7 +21,7 @@ parser.add_argument(
     dest='model-name', help='Model to use for training: efficientnet_b0, resnet18'
 )
 parser.add_argument(
-    '-w', '--weights', type=str, default='model_pretrained_True_prueba2.pth',
+    '-w', '--weights', type=str, default='../weights/model_pretrained_True_prueba2.pth',
     dest='weights', help='Model weights to use for testing.'
 )
 args = vars(parser.parse_args())
@@ -30,6 +30,9 @@ args = vars(parser.parse_args())
 model = build_model(pretrained=False, fine_tune=False, num_classes=len(class_names), model_name=args['model-name'])
 checkpoint = torch.load(args['weights'], map_location=DEVICE)
 model.load_state_dict(checkpoint['model_state_dict'])
+model.to(DEVICE)
+print(model.eval())
+model.eval()
 
 model.eval()
 print('Loading trained model weights...')
