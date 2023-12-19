@@ -94,6 +94,8 @@ For training, you can use the following command:
 - **learning_rate**: Learning rate to use in the training process.
 - **name**: Name of the model to save the weights and the results.
 
+All the results will be saved in this path `~/Documents/training_results/<name>`.
+
 ### Testing
 
 You have to options for testing the models:
