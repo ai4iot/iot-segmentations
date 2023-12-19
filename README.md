@@ -12,8 +12,10 @@ In the future, more models will be added to further expand the analysis and opti
 
 * [Models results and comparison](#models-results-and-comparison)
 * [Future Models](#future-models)
+* [Dataset](#dataset)
 * [Getting Started](#getting-started)
 * [Usage](#usage)
+* [Live inference](#live-inference)
 
 ## Models results and comparison
 
@@ -24,9 +26,9 @@ In the future, more models will be added to further expand the analysis and opti
 - **Confusion Matrix:**
 
 | Actual/Predicted | person | nonperson |
-|-------------------|--------|-----------|
-| person            | 564    | 36        |
-| nonperson         | 12     | 388       |
+|------------------|--------|-----------|
+| person           | 564    | 36        |
+| nonperson        | 12     | 388       |
 
 
 ### EfficientNet
@@ -35,9 +37,9 @@ In the future, more models will be added to further expand the analysis and opti
 - **Confusion Matrix:**
 
 | Actual/Predicted | person | nonperson |
-|-------------------|--------|-----------|
-| person            | 597    | 3         |
-| nonperson         | 39     | 361       |
+|------------------|--------|-----------|
+| person           | 597    | 3         |
+| nonperson        | 39     | 361       |
 
 ### ResNet18
 - **Accuracy** 97.1%
@@ -45,9 +47,9 @@ In the future, more models will be added to further expand the analysis and opti
 - **Confusion Matrix:**
 
 | Actual/Predicted | person | nonperson |
-|-------------------|--------|-----------|
-| person            | 571    | 29        |
-| nonperson         | 0      | 400       |
+|------------------|--------|-----------|
+| person           | 571    | 29        |
+| nonperson        | 0      | 400       |
 
 
 ## Future Models
@@ -57,7 +59,7 @@ range of options for person detection. Contributions and suggestions for new mod
 
 ## Dataset
 
-For training we have used the [person_dataset](input/person_dataset). Contains
+For training, we have used the [person_dataset](input/person_dataset). Contains
 two classes (person and nonperson). It is made up with images from coco dataset and
 images taken grom an ESP32-CAM.  
 For testing we have used the [esp-camera](input/test/esp-camera). Contains 1000 images all taken 
@@ -110,3 +112,31 @@ You have to options for testing the models:
     ```bash
     python confusion_matrix.py -m <model_name> -w <weights_path>
     ```
+   
+You will also a get a plot with the confusion matrix.
+   
+## Live inference
+You can use your webcam to make live inference with the models you've trained. We have two options:
+
+### Local inference
+
+With [live-inference-local.py](src/live-inference-local.py). You can use the following command:
+
+```bash
+python live-inference-local.py -c <camera_port> -s <window_size> -m <model_name> -w <weights_path>
+```
+
+### Web streaming inference
+
+With [live-inference-web.py](src/live-inference-stream.py). You can use the following command:
+
+```bash
+python live-inference-stream.py -c <camera_port> -s <window_size> -m <model_name> -w <weights_path>
+```
+Then you can access to the streaming in your browser with this url: `http://<ip>:5000/`
+
+
+
+
+
+
