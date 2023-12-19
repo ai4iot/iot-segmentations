@@ -79,11 +79,12 @@ def generate():
         outputs = outputs.detach().cpu().numpy()
         pred_class_name = class_names[np.argmax(outputs[0])]
         print(outputs[0])
+        color = (0, 255, 0) if pred_class_name == 'person' else (0, 0, 255)
         # Annotate the image with prediction.
         cv2.putText(
             frame, f"Pred: {pred_class_name}",
             (10, 55), cv2.FONT_HERSHEY_SIMPLEX,
-            1.0, (100, 100, 225), 2, lineType=cv2.LINE_AA
+            1.0, color, 2, lineType=cv2.LINE_AA
         )
         (flag, encodedImage) = cv2.imencode(".jpg", frame)
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
