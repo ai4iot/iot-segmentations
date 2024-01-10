@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask
 from flask import render_template
 from flask import Response
@@ -5,7 +7,7 @@ import numpy as np
 import torch
 import cv2
 from jinja2.compiler import generate
-
+import logging
 from model import build_model
 from torchvision import transforms
 import argparse
@@ -45,7 +47,7 @@ arguments = vars(argument_parser.parse_args())
 model = build_model(pretrained=False, fine_tune=False, num_classes=len(class_names),
                     model_name=arguments['model-name'])
 checkpoint = torch.load(arguments['weights'], map_location=DEVICE)
-print('Loading trained model weights...')
+logging.info('Model loaded successfully.')
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(DEVICE)
 model.eval()
@@ -75,10 +77,11 @@ def generate():
         transformed_frame = transformed_frame.to(DEVICE)
 
         # Forward pass through the image.
+        starting_time = time.time()
         outputs = model(transformed_frame)
+        logging.info(f'Inference time: {(time.time() - starting_time)*1000} microseconds''')
         outputs = outputs.detach().cpu().numpy()
         pred_class_name = class_names[np.argmax(outputs[0])]
-        print(outputs[0])
         color = (0, 255, 0) if pred_class_name == 'person' else (0, 0, 255)
         # Annotate the image with prediction.
         cv2.putText(

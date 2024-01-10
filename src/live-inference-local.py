@@ -5,6 +5,7 @@ import cv2
 from model import build_model
 from torchvision import transforms
 import argparse
+import logging
 
 DATA_PATH = '../input/test/esp-camera'
 IMAGE_SIZE = 224
@@ -39,7 +40,7 @@ arguments = vars(argument_parser.parse_args())
 model = build_model(pretrained=False, fine_tune=False, num_classes=len(class_names),
                     model_name=arguments['model-name'])
 checkpoint = torch.load(arguments['weights'], map_location=DEVICE)
-print('Loading trained model weights...')
+logging.info(f"Loaded model weights from {arguments['weights']}")
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(DEVICE)
 model.eval()
