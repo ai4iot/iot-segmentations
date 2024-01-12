@@ -12,7 +12,7 @@ from model import build_model
 from torchvision import transforms
 import argparse
 
-DATA_PATH = '../input/test/esp-camera'
+
 IMAGE_SIZE = 224
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
