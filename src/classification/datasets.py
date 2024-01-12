@@ -3,7 +3,7 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Subset
 
 # Required constants.
-ROOT_DIR = '../input/person_dataset'
+ROOT_DIR = '../../input/person_dataset'
 VALID_SPLIT = 0.1
 IMAGE_SIZE = 224  # Image size of resize when applying transforms.
 BATCH_SIZE = 16
