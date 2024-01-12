@@ -8,6 +8,10 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, precision_
 from model import build_model
 from torchvision import transforms
 import argparse
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+
 
 # Constants.
 DATA_PATH = '../input/test/esp-camera'
@@ -28,14 +32,15 @@ args = vars(parser.parse_args())
 
 # Load the trained model.
 model = build_model(pretrained=False, fine_tune=False, num_classes=len(class_names), model_name=args['model-name'])
+logging.info('Loading trained model weights...')
 checkpoint = torch.load(args['weights'], map_location=DEVICE)
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(DEVICE)
+logging.info('Model loaded successfully.')
 print(model.eval())
 model.eval()
 
 model.eval()
-print('Loading trained model weights...')
 
 # Lists to store ground truth and predicted labels.
 true_labels = []
@@ -52,7 +57,7 @@ for image_path in all_image_paths:
     try:
         image = cv2.imread(image_path)
         if image is None:
-            print(f"Error al leer la imagen: {image_path}")
+            logging.error(f"Error reading image {image_path}")
             continue
 
         orig_image = image.copy()
@@ -78,7 +83,7 @@ for image_path in all_image_paths:
         # print('GT: ' + gt_class_name + ' Pred: ' + pred_class_name)
 
     except Exception as e:
-        print(f"Error al procesar la imagen {image_path}: {str(e)}")
+        logging.error(f"Error processing image {image_path}: {str(e)}")
     continue
 
 conf_matrix = confusion_matrix(true_labels, predicted_labels)

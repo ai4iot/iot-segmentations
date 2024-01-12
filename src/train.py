@@ -6,6 +6,7 @@ from tqdm.auto import tqdm
 from model import build_model
 from datasets import get_datasets, get_data_loaders
 from utils import save_model, save_plots
+import logging
 # construct the argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -100,18 +101,20 @@ def validate(model, testloader, criterion):
 if __name__ == '__main__':
     # Load the training and validation datasets.
     dataset_train, dataset_valid, dataset_classes = get_datasets(args['pretrained'])
-    print(f"[INFO]: Number of training images: {len(dataset_train)}")
-    print(f"[INFO]: Number of validation images: {len(dataset_valid)}")
-    print(f"[INFO]: Class names: {dataset_classes}\n")
+    logging.info('Datasets loaded.')
+    logging.info(f"Number of training images: {len(dataset_train)}")
+    logging.info(f"Number of validation images: {len(dataset_valid)}")
+    logging.info(f"Class names: {dataset_classes}\n")
     # Load the training and validation data loaders.
     train_loader, valid_loader = get_data_loaders(dataset_train, dataset_valid)
     # Learning_parameters.
     lr = args['learning_rate']
     epochs = args['epochs']
     device = ('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Computation device: {device}")
-    print(f"Learning rate: {lr}")
-    print(f"Epochs to train for: {epochs}\n")
+    logging.info('Training parameters:')
+    logging.info(f"Computation device: {device}")
+    logging.info(f"Learning rate: {lr}")
+    logging.info(f"Epochs to train for: {epochs}\n")
     model = build_model(
         pretrained=args['pretrained'],
         fine_tune=True,
@@ -121,10 +124,10 @@ if __name__ == '__main__':
 
     # Total parameters and trainable parameters.
     total_params = sum(p.numel() for p in model.parameters())
-    print(f"{total_params:,} total parameters.")
+    logging.info(f"{total_params:,} total parameters.")
     total_trainable_params = sum(
         p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"{total_trainable_params:,} training parameters.")
+    logging.info(f"{total_trainable_params:,} training parameters.")
     # Optimizer.
     optimizer = optim.Adam(model.parameters(), lr=lr)
     # Loss function.
@@ -134,7 +137,7 @@ if __name__ == '__main__':
     train_acc, valid_acc = [], []
     # Start the training.
     for epoch in range(epochs):
-        print(f"[INFO]: Epoch {epoch + 1} of {epochs}")
+        logging.info(f"Epoch {epoch + 1} of {epochs}")
         train_epoch_loss, train_epoch_acc = train(model, train_loader,
                                                   optimizer, criterion)
         valid_epoch_loss, valid_epoch_acc = validate(model, valid_loader,

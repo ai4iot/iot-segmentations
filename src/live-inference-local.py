@@ -5,6 +5,7 @@ import cv2
 from model import build_model
 from torchvision import transforms
 import argparse
+import logging
 
 DATA_PATH = '../input/test/esp-camera'
 IMAGE_SIZE = 224
@@ -39,7 +40,7 @@ arguments = vars(argument_parser.parse_args())
 model = build_model(pretrained=False, fine_tune=False, num_classes=len(class_names),
                     model_name=arguments['model-name'])
 checkpoint = torch.load(arguments['weights'], map_location=DEVICE)
-print('Loading trained model weights...')
+logging.info(f"Loaded model weights from {arguments['weights']}")
 model.load_state_dict(checkpoint['model_state_dict'])
 model.to(DEVICE)
 model.eval()
@@ -71,11 +72,14 @@ while True:
     outputs = outputs.detach().cpu().numpy()
     pred_class_name = class_names[np.argmax(outputs[0])]
     print(outputs[0])
+
+    color = (0, 255, 0) if pred_class_name == 'person' else (0, 0, 255)
+
     # Annotate the image with prediction.
     cv2.putText(
         frame, f"Pred: {pred_class_name}",
         (10, 55), cv2.FONT_HERSHEY_SIMPLEX,
-        1.0, (100, 100, 225), 2, lineType=cv2.LINE_AA
+        1.0, color, 2, lineType=cv2.LINE_AA
     )
     cv2.imshow('Yo', frame)
 
