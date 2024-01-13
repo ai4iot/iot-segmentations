@@ -4,8 +4,8 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm.auto import tqdm
 from model import build_model
-from datasets import get_datasets, get_data_loaders
-from utils import save_model, save_plots
+from src.classification.ai_operations.tools.datasets import get_datasets, get_data_loaders
+from src.classification.ai_operations.tools.utils import save_model, save_plots
 import logging
 # construct the argument parser
 parser = argparse.ArgumentParser()
