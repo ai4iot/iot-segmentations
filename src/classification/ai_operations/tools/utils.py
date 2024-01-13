@@ -1,109 +1,157 @@
 import torch
 import cv2
 from torchvision import transforms
-import matplotlib
 import matplotlib.pyplot as plt
 import os
 import logging
 
-matplotlib.style.use('ggplot')
 
+class ModelUtils:
+    def __init__(self):
+        # Setting the matplotlib style
+        plt.style.use('ggplot')
 
-def image_normalization(image, IMAGE_SIZE=224):
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    transform = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
+    @staticmethod
+    def image_normalization(image, image_size=224):
+        """
+        Normalize and prepare an image for model input.
+
+        Args:
+        - image: Input image (BGR format).
+        - IMAGE_SIZE: Size to resize the image.
+
+        Returns:
+        - Normalized and processed image.
+        """
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        transform = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.Resize((image_size, image_size)),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            )
+        ])
+        image = transform(image)
+        image = torch.unsqueeze(image, 0)
+        return image
+
+    @staticmethod
+    def save_model(epochs, model, optimizer, criterion, pretrained, name, model_name):
+        """
+        Save the trained model to disk.
+
+        Args:
+        - epochs: Number of training epochs.
+        - model: The trained model.
+        - optimizer: The optimizer used during training.
+        - criterion: The loss criterion.
+        - pretrained: Boolean indicating whether the model is pretrained.
+        - name: Name associated with the saved model.
+        - model_name: Name of the model.
+
+        Saves the model checkpoint to the specified directory.
+        """
+        userdir = os.path.expanduser('~')
+        directory = f"{userdir}/Documents/training_results/{name}"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        torch.save({
+            'epoch': epochs,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': criterion,
+        }, f"{directory}/{model_name}_pretrained_{pretrained}_{name}.pt")
+
+    @staticmethod
+    def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name, model_name):
+        """
+        Save loss and accuracy plots to disk.
+
+        Args:
+        - train_acc: List of training accuracies over epochs.
+        - valid_acc: List of validation accuracies over epochs.
+        - train_loss: List of training losses over epochs.
+        - valid_loss: List of validation losses over epochs.
+        - pretrained: Boolean indicating whether the model is pretrained.
+        - name: Name associated with the saved plots.
+        - model_name: Name of the model.
+
+        Saves the accuracy and loss plots to the specified directory.
+        """
+        userdir = os.path.expanduser('~')
+        directory = f"{userdir}/Documents/training_results/{name}"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # Accuracy plots
+        plt.figure(figsize=(10, 7))
+        plt.plot(
+            train_acc, color='green', linestyle='-',
+            label='train accuracy'
         )
-    ])
-    image = transform(image)
-    image = torch.unsqueeze(image, 0)
+        plt.plot(
+            valid_acc, color='blue', linestyle='-',
+            label='validation accuracy'
+        )
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.legend()
+        plt.savefig(f"{directory}/accuracy_{model_name}_pretrained_{pretrained}_{name}.png")
 
-    return image
+        # Loss plots
+        plt.figure(figsize=(10, 7))
+        plt.plot(
+            train_loss, color='orange', linestyle='-',
+            label='train loss'
+        )
+        plt.plot(
+            valid_loss, color='red', linestyle='-',
+            label='validation loss'
+        )
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.legend()
+        plt.savefig(f"{directory}/loss_{model_name}_pretrained_{pretrained}_{name}.png")
 
+    def obtain_dir_number(base_dir):
+        """
+        Obtain the next available directory number.
 
-def save_model(epochs, model, optimizer, criterion, pretrained, name, model_name):
-    """
-    Function to save the trained model to disk.
-    """
-    userdir = os.path.expanduser('~')
-    directory = f"{userdir}/Documents/training_results/{name}"
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+        Args:
+        - base_dir: Base directory path.
 
-    torch.save({
-        'epoch': epochs,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'loss': criterion,
-    }, f"{directory}/{model_name}_pretrained_{pretrained}_{name}.pt")
+        Returns:
+        - The next available directory number.
+        """
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+            logging.info(f"Created directory {base_dir}")
 
+        try:
+            dirs_names = [name for name in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, name))]
+            numbers = [int(name.split('_')[1]) for name in dirs_names]
+            next_number = 1 if not numbers else max(numbers) + 1
+        except Exception as e:
+            print(e)
+            next_number = 1
 
-def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name, model_name):
-    """
-    Function to save the loss and accuracy plots to disk.
-    """
-    # accuracy plots
-    userdir = os.path.expanduser('~')
-    directory = f"{userdir}/Documents/training_results/{name}"
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    plt.figure(figsize=(10, 7))
-    plt.plot(
-        train_acc, color='green', linestyle='-',
-        label='train accuracy'
-    )
-    plt.plot(
-        valid_acc, color='blue', linestyle='-',
-        label='validataion accuracy'
-    )
-    plt.xlabel('Epochs')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    plt.savefig(f"{directory}/accuracy_{model_name}_pretrained_{pretrained}_{name}.png")
+        return next_number
 
-    # loss plots
-    plt.figure(figsize=(10, 7))
-    plt.plot(
-        train_loss, color='orange', linestyle='-',
-        label='train loss'
-    )
-    plt.plot(
-        valid_loss, color='red', linestyle='-',
-        label='validataion loss'
-    )
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.savefig(f"{directory}/loss_{model_name}_pretrained_{pretrained}_{name}.png")
+    @staticmethod
+    def create_new_pre_dir(self, base_dir):
+        """
+        Create a new directory with a unique 'pre_' prefix.
 
-def obtain_dir_number(base_dir):
+        Args:
+        - base_dir: Base directory path.
 
-    if not os.path.exists(base_dir):
-        os.makedirs(base_dir)
-        logging.info(f"Created directory {base_dir}")
-
-    try:
-        dirs_names = [name for name in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, name))]
-        numbers = [int(name.split('_')[1]) for name in dirs_names]
-        next_number = 1 if not numbers else max(numbers) + 1
-    except Exception as e:
-        print(e)
-        next_number = 1
-
-    return next_number
-
-def create_new_pre_dir(base_dir):
-
-    next_number = obtain_dir_number(base_dir)
-
-    new_dir = f"{base_dir}/pre_{next_number}"
-    os.makedirs(new_dir)
-
-    return new_dir
-
-
+        Returns:
+        - The path of the newly created directory.
+        """
+        next_number = self.obtain_dir_number(base_dir)
+        new_dir = f"{base_dir}/pre_{next_number}"
+        os.makedirs(new_dir)
+        return new_dir
