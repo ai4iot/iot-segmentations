@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
         trainer.run()
 
-    if args.mode == 'metrics':
+    elif args.mode == 'metrics':
 
         from ai_operations.inference import Metrics
 
@@ -50,6 +50,11 @@ if __name__ == '__main__':
         )
 
         metrics.obtain_metrics()
+
+
+#TODO: poner en builder model la opcion de inferencia entonces asi no lo tengoq ue poner cada vez que lo hago y que devuelva los outputs, tambien camiar el nomnre.
+
+    elif args.mode == 'live':
 
 
 
