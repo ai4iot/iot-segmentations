@@ -6,7 +6,7 @@ def get_args():
 
     parser.add_argument(
         '-m', '--model-name', type=str, default='efficientnet_b0',
-        dest='model-name', help='Model to use for training: efficientnet_b0, resnet18'
+        dest='model_name', help='Model to use for training: efficientnet_b0, resnet18'
     )
     parser.add_argument(
         '-w', '--weights', type=str, default='../../weights/model_pretrained_True_prueba2.pth',
@@ -35,13 +35,13 @@ def get_args():
                              'stream'
                              'of the camera. (Maintains the relationship of'
                              'aspect with respect to width)')
-
     parser.add_argument(
         '-e', '--epochs', type=int, default=10, help='Number of epochs to train our network for'
     )
 
     parser.add_argument(
-        '-pt', '--pretrained', action='store_true', default=True, help='Whether to use pretrained weights or not'
+        '-pt', '--pretrained', dest='pretrained',
+        action='store_false', default=True, help='Whether to use pretrained weights or not'
     )
 
     parser.add_argument(
@@ -49,7 +49,12 @@ def get_args():
         help='Learning rate for training the model'
     )
 
-    parser.add_argument('-n', '--name', type=str, dest='name', help='Name used to store de results'
+    parser.add_argument(
+        '-', '--mode', type=str, default='train', dest='mode', help='Mode to run the script in: train, test'
+    )
+
+    parser.add_argument('-fn', '--fine-tune', dest='fine_tune', action='store_true', default=False,
+                        help='Whether to fine-tune all layers or not.'
                         )
 
     return parser.parse_args()

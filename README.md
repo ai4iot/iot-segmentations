@@ -87,7 +87,7 @@ To get started with this project, follow these steps:
 
 For training, you can use the following command:
 ```bash
-  python train.py -m <model_name> -e <epochs> -pt <self> -lr <learning_rate> -n <name>
+  python trainer.py -m <model_name> -e <epochs> -pt <self> -lr <learning_rate> -n <name>
 ```  
 
 - **model_name**: Name of the model to use. Currently, the options are: `efficientnet`and `resnet18`.

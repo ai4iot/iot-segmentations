@@ -132,7 +132,7 @@ class ModelUtils:
         return next_number
 
     @staticmethod
-    def create_new_pre_dir(self, base_dir):
+    def create_new_pre_dir(base_dir):
         """
         Create a new directory with a unique 'pre_' prefix.
 
@@ -142,7 +142,7 @@ class ModelUtils:
         Returns:
         - The path of the newly created directory.
         """
-        next_number = self.obtain_dir_number(base_dir)
+        next_number = ModelUtils.obtain_dir_number(base_dir)
         new_dir = f"{base_dir}/pre_{next_number}"
         os.makedirs(new_dir)
         return new_dir
