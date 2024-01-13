@@ -5,8 +5,9 @@ import logging
 
 
 class ModelBuilder:
-    def __init__(self):
+    def __init__(self, nombre):
         self.model = None
+        self.model_name = nombre
 
     def build_model(self, pretrained=True, fine_tune=True, num_classes=10, model_name='efficientnet_b0'):
         """

@@ -38,7 +38,7 @@ class ModelUtils:
         return image
 
     @staticmethod
-    def save_model(epochs, model, optimizer, criterion, pretrained, name, model_name):
+    def save_model(epochs, model, optimizer, criterion, pretrained, model_name, directory):
         """
         Save the trained model to disk.
 
@@ -48,25 +48,21 @@ class ModelUtils:
         - optimizer: The optimizer used during training.
         - criterion: The loss criterion.
         - pretrained: Boolean indicating whether the model is pretrained.
-        - name: Name associated with the saved model.
         - model_name: Name of the model.
+        - directory: Directory to save the model to.
 
         Saves the model checkpoint to the specified directory.
         """
-        userdir = os.path.expanduser('~')
-        directory = f"{userdir}/Documents/training_results/{name}"
-        if not os.path.exists(directory):
-            os.makedirs(directory)
 
         torch.save({
             'epoch': epochs,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': criterion,
-        }, f"{directory}/{model_name}_pretrained_{pretrained}_{name}.pt")
+        }, f"{directory}/{model_name}_pretrained_{pretrained}.pt")
 
     @staticmethod
-    def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, name, model_name):
+    def save_plots(train_acc, valid_acc, train_loss, valid_loss, pretrained, model_name, directory):
         """
         Save loss and accuracy plots to disk.
 
@@ -76,16 +72,11 @@ class ModelUtils:
         - train_loss: List of training losses over epochs.
         - valid_loss: List of validation losses over epochs.
         - pretrained: Boolean indicating whether the model is pretrained.
-        - name: Name associated with the saved plots.
         - model_name: Name of the model.
+        - directory: Directory to save the plots to.
 
         Saves the accuracy and loss plots to the specified directory.
         """
-        userdir = os.path.expanduser('~')
-        directory = f"{userdir}/Documents/training_results/{name}"
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
         # Accuracy plots
         plt.figure(figsize=(10, 7))
         plt.plot(
@@ -99,7 +90,7 @@ class ModelUtils:
         plt.xlabel('Epochs')
         plt.ylabel('Accuracy')
         plt.legend()
-        plt.savefig(f"{directory}/accuracy_{model_name}_pretrained_{pretrained}_{name}.png")
+        plt.savefig(f"{directory}/accuracy_{model_name}_pretrained_{pretrained}.png")
 
         # Loss plots
         plt.figure(figsize=(10, 7))
@@ -114,7 +105,7 @@ class ModelUtils:
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
         plt.legend()
-        plt.savefig(f"{directory}/loss_{model_name}_pretrained_{pretrained}_{name}.png")
+        plt.savefig(f"{directory}/loss_{model_name}_pretrained_{pretrained}.png")
 
     def obtain_dir_number(base_dir):
         """
