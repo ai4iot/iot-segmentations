@@ -1,6 +1,5 @@
 import argparse
 
-
 def get_args():
     parser = argparse.ArgumentParser()
 
@@ -15,7 +14,7 @@ def get_args():
     parser.add_argument(
         '-w', '--weights',
         type=str,
-        default='../../weights/model_pretrained_True_prueba2.pth',
+        default='../../weights/person_nonperson_efficientnet.pth',
         dest='weights',
         help='Model weights to use for testing.'
     )

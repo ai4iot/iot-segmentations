@@ -2,16 +2,20 @@ import torchvision.models as models
 import torch.nn as nn
 import torch
 import logging
+import os
 
 
 class ModelBuilder:
-    def __init__(self, name, pretrained=True, fine_tune=True, num_classes=10, model_name='efficientnet_b0'):
+    def __init__(self, name, pretrained=True, fine_tune=True, num_classes=10, model_name='efficientnet_b0',
+                 weights=None, device='cuda' if torch.cuda.is_available() else 'cpu'):
 
         self.model_name = name
         self.pretrained = pretrained
         self.fine_tune = fine_tune
         self.num_classes = num_classes
         self.model_name = model_name
+        self.weights = weights
+        self.device = device
         self.model = self.build_model()
 
     def build_model(self):
@@ -27,6 +31,7 @@ class ModelBuilder:
         Returns:
         - model: The constructed and configured model.
         """
+
         if self.pretrained:
             logging.info('Loading pre-trained weights')
         else:
@@ -51,6 +56,12 @@ class ModelBuilder:
 
         # Freeze or fine-tune layers.
         self._set_requires_grad()
+
+        if self.weights is not None:
+            logging.info(f'Loading weights from {self.weights}')
+            checkpoint = torch.load(self.weights, map_location=self.device)
+            self.model.load_state_dict(checkpoint['model_state_dict'])
+            logging.info('Weights loaded successfully.')
 
         return self.model
 

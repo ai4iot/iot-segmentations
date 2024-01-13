@@ -110,7 +110,7 @@ You have to options for testing the models:
 2. Obtain all the metrics for the test dataset:
 
     ```bash
-    python confusion_matrix.py -m <model_name> -w <weights_path>
+    python metrics.py -m <model_name> -w <weights_path>
     ```
    
 You will also a get a plot with the confusion matrix.

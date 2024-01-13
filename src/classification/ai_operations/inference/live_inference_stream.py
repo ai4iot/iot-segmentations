@@ -38,7 +38,7 @@ argument_parser.add_argument(
 )
 
 argument_parser.add_argument(
-    '-w', '--weights', type=str, default='../weights/model_pretrained_True_prueba2.pth',
+    '-w', '--weights', type=str, default='../weights/person_nonperson_efficientnet.pth',
     dest='weights', help='Model weights to use for testing.'
 )
 
