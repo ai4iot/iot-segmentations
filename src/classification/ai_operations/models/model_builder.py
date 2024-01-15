@@ -57,7 +57,7 @@ class ModelBuilder:
         # Freeze or fine-tune layers.
         self._set_requires_grad()
 
-        if self.weights is not None:
+        if not self.pretrained and self.weights is not None:
             logging.info(f'Loading weights from {self.weights}')
             checkpoint = torch.load(self.weights, map_location=self.device)
             self.model.load_state_dict(checkpoint['model_state_dict'])
