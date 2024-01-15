@@ -1,8 +1,11 @@
 import os
+
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QComboBox, QCheckBox, \
-    QGridLayout, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QComboBox, QCheckBox, \
+    QGridLayout, QFileDialog, QMessageBox, QProgressBar
 from ..models import ModelBuilder
+from ..tools import LogWidget
+import logging
 
 class MainMenu(QWidget):
     def __init__(self):
@@ -12,11 +15,14 @@ class MainMenu(QWidget):
         self.setWindowTitle("Main Menu")
         self.setWindowIcon(QIcon('icon.png'))
 
+        # Default values
+        self.log_widget = LogWidget()
+        self.progress_bar = QProgressBar(self)
         self.model_name = 'efficientnet_b0'
         self.mode = 'train'
         self.weights_path = './ai_operations/models/person_nonperson_efficientnet.pth'
         self.dataset_path = '../../input/test/esp-camera'
-        self.output_path = './predictions'
+        self.output_path = '../../runs'
         self.image_input_path = '0'  # Default value for QLineEdit
         self.epochs = 10
         self.learning_rate = '0.0001'
@@ -24,6 +30,10 @@ class MainMenu(QWidget):
         self.visualize_checked = False
         self.pretrained_checked = True
         self.fine_tune_checked = True
+
+        logging.basicConfig(stream=self.log_widget, level=logging.INFO)
+
+        logging.info('Logging started.')
 
         # Scroll menu for Model Name
         model_name_label = QLabel("Model Name:")
@@ -90,6 +100,10 @@ class MainMenu(QWidget):
         # Layout
         layout = QGridLayout()
 
+        self.progress_bar.setGeometry(30, 40, 200, 25)
+
+        self.progress_bar.setValue(0)
+
         layout.addWidget(mode_label, 0, 0)
         layout.addWidget(self.mode_combo, 0, 1)
 
@@ -129,7 +143,11 @@ class MainMenu(QWidget):
         layout.addWidget(fine_tune_label, 11, 0)
         layout.addWidget(self.fine_tune_checkbox, 11, 1)
 
-        layout.addWidget(self.launch_button, 12, 0, 1, 2)  # Span 1 row, 2 columns
+        layout.addWidget(self.progress_bar, 13, 0, 1, 2)
+
+        layout.addWidget(self.launch_button, 12, 0, 1, 2)
+
+        layout.addWidget(self.log_widget, 14, 0, 1, 2)
 
         self.setLayout(layout)
 
@@ -203,8 +221,8 @@ class MainMenu(QWidget):
 
         elif selected_mode == "Metrics":
             self.model_name_combo.setEnabled(True)
-            self.weights_entry.setEnabled(False)
-            self.weights_button.setEnabled(False)
+            self.weights_entry.setEnabled(True)
+            self.weights_button.setEnabled(True)
             self.dataset_entry.setEnabled(True)
             self.dataset_button.setEnabled(True)
             self.output_entry.setEnabled(True)
@@ -212,10 +230,10 @@ class MainMenu(QWidget):
             self.save_images_checkbox.setEnabled(False)
             self.image_input_entry.setEnabled(False)
             self.visualize_checkbox.setEnabled(False)
-            self.epochs_entry.setEnabled(True)
-            self.pretrained_checkbox.setEnabled(True)
-            self.learning_rate_entry.setEnabled(True)
-            self.fine_tune_checkbox.setEnabled(True)
+            self.epochs_entry.setEnabled(False)
+            self.pretrained_checkbox.setEnabled(False)
+            self.learning_rate_entry.setEnabled(False)
+            self.fine_tune_checkbox.setEnabled(False)
 
     def launch_button_clicked(self):
         self.model_name = self.model_name_combo.currentText()
@@ -238,11 +256,8 @@ class MainMenu(QWidget):
 
         QMessageBox.information(self, "Launch Info", message)
 
-        workspace = os.getcwd()
-
-        print(f"El directorio de trabajo actual es: {workspace}")
-
-        class_names = [name for name in os.listdir(self.dataset_path) if os.path.isdir(os.path.join(self.dataset_path, name))]
+        class_names = [name for name in os.listdir(self.dataset_path) if
+                       os.path.isdir(os.path.join(self.dataset_path, name))]
         num_classes = len(class_names)
 
         model = ModelBuilder(
@@ -278,6 +293,29 @@ class MainMenu(QWidget):
 
             metrics = Metrics(
                 model_builder=model,
-                input_dir=self.input,
-                output_dir=self.output
+                input_dir=self.dataset_path,
+                output_dir=self.output_path
             )
+
+            metrics.obtain_metrics()
+
+    #         metrics_thread = threading.Thread(target=metrics.obtain_metrics)
+    #         metrics_thread.start()
+    #
+    #         timer = threading.Timer(1.0, self.check_threads)
+    #         timer.start()
+    #
+    # def check_threads(self, *threads):
+    #     # Check if the threads have finished
+    #     for thread in threads:
+    #         if thread is not None and not thread.is_alive():
+    #             QApplication.processEvents()
+    #
+    #     # Wait for all threads to finish before returning
+    #     for thread in threads:
+    #         if thread is not None and thread.is_alive():
+    #             thread.join()
+
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        logging.shutdown()

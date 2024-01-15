@@ -14,6 +14,7 @@ class ModelBuilder:
         self.fine_tune = fine_tune
         self.num_classes = num_classes
         self.model_name = model_name
+        self.model_name = model_name
         self.weights = weights
         self.device = device
         self.model = self.build_model()

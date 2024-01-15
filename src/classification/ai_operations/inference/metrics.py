@@ -62,7 +62,12 @@ class Metrics:
         """
 
         all_image_paths = self._obtain_images_paths()
+        self.model_builder.model_name = self.model_builder.model.to(self.device)
         self.model_builder.model.eval()
+
+        logging.info(f'Starting inference with {self.device}')
+        logging.info(f'Found {len(all_image_paths)} images in {self.input_dir}')
+        print(f'Found {len(all_image_paths)} images in {self.input_dir}')
 
         for image_path in all_image_paths:
             gt_class_name = image_path.split(os.path.sep)[-2]
@@ -89,6 +94,9 @@ class Metrics:
             continue
 
         # Calculate and display confusion matrix.
+        print("len true labels", len(self.true_labels))
+        print("len predicted labels", len(self.predicted_labels))
+
         conf_matrix = confusion_matrix(self.true_labels, self.predicted_labels)
         print(conf_matrix)
         disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=self.class_names)
@@ -96,6 +104,7 @@ class Metrics:
         #plt.show()
 
         new_dir = ModelUtils.create_new_pre_dir(self.output_dir)
+        logging.info(f'Saving confusion matrix to {new_dir}/confusion_matrix.png')
         plt.savefig(f"{new_dir}/confusion_matrix.png")
 
         # Calculate and print precision, recall, and F1 score.
@@ -104,5 +113,8 @@ class Metrics:
         f1 = f1_score(self.true_labels, self.predicted_labels)
 
         print('Precision: ' + str(precision))
+        logging.info(f'Precision: {precision}')
         print('Recall: ' + str(recall))
+        logging.info(f'Recall: {recall}')
         print('F1: ' + str(f1))
+        logging.info(f'F1: {f1}')

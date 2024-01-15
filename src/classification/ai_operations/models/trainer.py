@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QObject
+
 from .model_builder import ModelBuilder  # Importing ModelBuilder from the sibling module
 from ..tools import DataPreparation, ModelUtils  # Importing DataPreparation and ModelUtils from the parent module
 import torch
@@ -6,8 +8,8 @@ import torch.optim as optim
 import torch.nn as nn
 from tqdm import tqdm  # Importing tqdm for progress bars
 
+class Trainer(QObject):
 
-class Trainer:
     """
     Trainer class for training and validating a neural network model.
 
@@ -27,6 +29,7 @@ class Trainer:
 
     """
 
+
     def __init__(self, data_preparation: DataPreparation, model: ModelBuilder,
                  device='cuda' if torch.cuda.is_available() else 'cpu',
                  criterion=nn.CrossEntropyLoss(), learning_rate=0.001, epochs=10, output_dir='../../runs'):
@@ -34,6 +37,7 @@ class Trainer:
         Initialize the Trainer class with specified parameters.
 
         """
+
         self.data_preparation = data_preparation
         self.learning_rate = learning_rate
         self.epochs = epochs
@@ -42,6 +46,9 @@ class Trainer:
         self.criterion = criterion
         self.device = device
         self.output_dir = output_dir
+
+
+
 
     def _train(self, trainloader):
         """
