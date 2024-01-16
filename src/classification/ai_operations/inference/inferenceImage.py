@@ -3,10 +3,52 @@ import cv2
 import numpy as np
 import glob as glob
 import os
-from model import build_model
-from utils import image_normalization, create_new_pre_dir
+from ..models import ModelBuilder
 import argparse
 import logging
+
+
+class LocalInfence():
+
+    def __init__(self, model_builder: ModelBuilder,
+                 output_dir='../../runs',
+                 input_dir='../../input/test/esp-camera',
+                 device='cuda' if torch.cuda.is_available() else 'cpu'):
+        """
+        Initialize Metrics object.
+
+        Args:
+        - model_builder (ModelBuilder): Instance of ModelBuilder.
+        - output_dir (str): Output directory for saving results.
+        - input_dir (str): Input directory containing test images.
+        - device (str): Device to use for inference ('cuda' or 'cpu').
+
+        """
+
+        self.model_builder = model_builder
+        self.device = device
+        self.output_dir = output_dir
+        self.input_dir = input_dir
+        self.class_names = sorted(
+            [name for name in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, name))])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'

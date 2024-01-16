@@ -3,9 +3,13 @@ import os
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QComboBox, QCheckBox, \
     QGridLayout, QFileDialog, QMessageBox, QProgressBar
+from flask import Flask
+
 from ..models import ModelBuilder
 from ..tools import LogWidget
 import logging
+
+app = Flask(__name__)
 
 class MainMenu(QWidget):
     def __init__(self):
@@ -44,7 +48,7 @@ class MainMenu(QWidget):
         # Scroll menu for Mode
         mode_label = QLabel("Mode:")
         self.mode_combo = QComboBox()
-        mode_values = ["Train", "Local Inference", "Live Inference", "Metrics"]
+        mode_values = ["Train", "Local Inference", "Web Inference", "Metrics"]
         self.mode_combo.addItems(mode_values)
         self.mode_combo.currentIndexChanged.connect(self.handle_mode_change)
 
@@ -94,6 +98,11 @@ class MainMenu(QWidget):
         fine_tune_label = QLabel("Fine-tune:")
         self.fine_tune_checkbox = QCheckBox()
 
+        # Text input for Class List
+        class_list_label = QLabel("Class List:")
+        self.class_list = QLineEdit("Class 1, Class 2, Class 3, Class 4, Class 5")
+
+        # Launch button
         self.launch_button = QPushButton("Launch")
         self.launch_button.clicked.connect(self.launch_button_clicked)
 
@@ -118,43 +127,49 @@ class MainMenu(QWidget):
         layout.addWidget(self.dataset_entry, 3, 1)
         layout.addWidget(self.dataset_button, 3, 2)
 
-        layout.addWidget(output_label, 4, 0)
-        layout.addWidget(self.output_entry, 4, 1)
-        layout.addWidget(self.output_button, 4, 2)
+        layout.addWidget(class_list_label, 4, 0)
+        layout.addWidget(self.class_list, 4, 1)
 
-        layout.addWidget(image_input_label, 5, 0)
-        layout.addWidget(self.image_input_entry, 5, 1)
+        layout.addWidget(output_label, 5, 0)
+        layout.addWidget(self.output_entry, 5, 1)
+        layout.addWidget(self.output_button, 5, 2)
 
-        layout.addWidget(epochs_label, 6, 0)
-        layout.addWidget(self.epochs_entry, 6, 1)
+        layout.addWidget(image_input_label, 6, 0)
+        layout.addWidget(self.image_input_entry, 6, 1)
 
-        layout.addWidget(learning_rate_label, 7, 0)
-        layout.addWidget(self.learning_rate_entry, 7, 1)
+        layout.addWidget(epochs_label, 7, 0)
+        layout.addWidget(self.epochs_entry, 7, 1)
 
-        layout.addWidget(save_images_label, 8, 0)
-        layout.addWidget(self.save_images_checkbox, 8, 1)
+        layout.addWidget(learning_rate_label, 8, 0)
+        layout.addWidget(self.learning_rate_entry, 8, 1)
 
-        layout.addWidget(visualize_label, 9, 0)
-        layout.addWidget(self.visualize_checkbox, 9, 1)
+        layout.addWidget(save_images_label, 9, 0)
+        layout.addWidget(self.save_images_checkbox, 9, 1)
 
-        layout.addWidget(pretrained_label, 10, 0)
-        layout.addWidget(self.pretrained_checkbox, 10, 1)
+        layout.addWidget(visualize_label, 10, 0)
+        layout.addWidget(self.visualize_checkbox, 10, 1)
 
-        layout.addWidget(fine_tune_label, 11, 0)
-        layout.addWidget(self.fine_tune_checkbox, 11, 1)
+        layout.addWidget(pretrained_label, 11, 0)
+        layout.addWidget(self.pretrained_checkbox, 11, 1)
 
-        layout.addWidget(self.progress_bar, 13, 0, 1, 2)
+        layout.addWidget(fine_tune_label, 12, 0)
+        layout.addWidget(self.fine_tune_checkbox, 12, 1)
 
-        layout.addWidget(self.launch_button, 12, 0, 1, 2)
+        layout.addWidget(self.launch_button, 13, 0, 1, 2)
 
-        layout.addWidget(self.log_widget, 14, 0, 1, 2)
+        layout.addWidget(self.progress_bar, 14, 0, 1, 2)
+
+        layout.addWidget(self.log_widget, 15, 0, 1, 2)
 
         self.setLayout(layout)
 
     def open_weights_dialog(self):
-        directory = QFileDialog.getExistingDirectory(self, "Select Directory")
-        if directory:
-            self.weights_entry.setText(directory)
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select File", "", "Supported Files (*.pt);;All Files (*)",
+                                                   options=options)
+        if file_path:
+            self.weights_entry.setText(file_path)
 
     def open_dataset_dialog(self):
         directory = QFileDialog.getExistingDirectory(self, "Select Directory")
@@ -203,7 +218,7 @@ class MainMenu(QWidget):
             self.learning_rate_entry.setEnabled(False)
             self.fine_tune_checkbox.setEnabled(False)
 
-        elif selected_mode == "Live Inference":
+        elif selected_mode == "Web Inference":
             self.model_name_combo.setEnabled(True)
             self.weights_entry.setEnabled(True)
             self.weights_button.setEnabled(True)
@@ -299,22 +314,26 @@ class MainMenu(QWidget):
 
             metrics.obtain_metrics()
 
-    #         metrics_thread = threading.Thread(target=metrics.obtain_metrics)
-    #         metrics_thread.start()
-    #
-    #         timer = threading.Timer(1.0, self.check_threads)
-    #         timer.start()
-    #
-    # def check_threads(self, *threads):
-    #     # Check if the threads have finished
-    #     for thread in threads:
-    #         if thread is not None and not thread.is_alive():
-    #             QApplication.processEvents()
-    #
-    #     # Wait for all threads to finish before returning
-    #     for thread in threads:
-    #         if thread is not None and thread.is_alive():
-    #             thread.join()
+        elif self.mode.lower() == 'web inference':
+            classes = self.extract_list()
+
+            from ..inference import WebInference
+
+            web_inference = WebInference(
+                model_builder=model,
+            )
+
+            app.run(host='0.0.0.0', port=5000, debug=False)
+
+    def extract_list(self):
+        input_text = self.class_list.text()
+
+        try:
+            extracted_list = [item.strip() for item in input_text.split(',')]
+            return extracted_list
+        except Exception as e:
+            logging.error(f"Error extracting list: {e}")
+            return None
 
     def closeEvent(self, event):
         super().closeEvent(event)

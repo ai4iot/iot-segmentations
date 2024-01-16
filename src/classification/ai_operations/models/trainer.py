@@ -7,6 +7,7 @@ import logging
 import torch.optim as optim
 import torch.nn as nn
 from tqdm import tqdm  # Importing tqdm for progress bars
+from io import StringIO
 
 class Trainer(QObject):
 
@@ -61,6 +62,7 @@ class Trainer(QObject):
         - Tuple: Tuple containing the epoch loss and accuracy.
 
         """
+        tqdm_output = StringIO()
         self.model_builder.model.train()
         logging.info('Training')
         train_running_loss = 0.0
@@ -86,9 +88,11 @@ class Trainer(QObject):
             self.optimizer.step()
 
         # Loss and accuracy for the complete epoch.
+        logging.info(tqdm_output.getvalue())
         epoch_loss = train_running_loss / counter
         epoch_acc = 100. * (train_running_correct / len(trainloader.dataset))
         return epoch_loss, epoch_acc
+
 
     def _validate(self, testloader):
         """
