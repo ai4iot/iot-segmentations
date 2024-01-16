@@ -87,12 +87,12 @@ To get started with this project, follow these steps:
 
 For training, you can use the following command:
 ```bash
-  python train.py -m <model_name> -e <epochs> -pt <pretrained> -lr <learning_rate> -n <name>
+  python trainer.py -m <model_name> -e <epochs> -pt <self> -lr <learning_rate> -n <name>
 ```  
 
 - **model_name**: Name of the model to use. Currently, the options are: `efficientnet`and `resnet18`.
 - **epochs**: Number of epochs to train the model.
-- **pretrained**: Use a pretrained model. Options: `True` or `False`.
+- **self**: Use a self model. Options: `True` or `False`.
 - **learning_rate**: Learning rate to use in the training process.
 - **name**: Name of the model to save the weights and the results.
 
@@ -110,7 +110,7 @@ You have to options for testing the models:
 2. Obtain all the metrics for the test dataset:
 
     ```bash
-    python confusion_matrix.py -m <model_name> -w <weights_path>
+    python metrics.py -m <model_name> -w <weights_path>
     ```
    
 You will also a get a plot with the confusion matrix.
@@ -131,7 +131,7 @@ python live-inference-local.py -c <camera_port> -s <window_size> -m <model_name>
 With [live-inference-web.py](src/live-inference-stream.py). You can use the following command:
 
 ```bash
-python live-inference-stream.py -c <camera_port> -s <window_size> -m <model_name> -w <weights_path>
+python live_inference_stream.py -c <camera_port> -s <window_size> -m <model_name> -w <weights_path>
 ```
 Then you can access to the streaming in your browser with this url: `http://<ip>:5000/`
 
