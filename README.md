@@ -15,9 +15,16 @@ In the future, more models will be added to further expand the analysis and opti
 * [Dataset](#dataset)
 * [Getting Started](#getting-started)
 * [Usage](#usage)
-* [Live inference](#live-inference)
 
 ## Models results and comparison
+
+### Dataset used for the results
+
+For training, we have used the [person_dataset](input/person_dataset). Contains
+two classes (person and nonperson). It is made up with images from coco dataset and
+images taken grom an ESP32-CAM.  
+For testing we have used the [esp-camera](input/test/esp-camera). Contains 1000 images all taken 
+from an ESP32-CAM.
 
 
 ### MobileNetV2
@@ -57,14 +64,6 @@ In the future, more models will be added to further expand the analysis and opti
 In the future, additional models will be incorporated into the project to provide a broader 
 range of options for person detection. Contributions and suggestions for new models are welcome.
 
-## Dataset
-
-For training, we have used the [person_dataset](input/person_dataset). Contains
-two classes (person and nonperson). It is made up with images from coco dataset and
-images taken grom an ESP32-CAM.  
-For testing we have used the [esp-camera](input/test/esp-camera). Contains 1000 images all taken 
-from an ESP32-CAM.
-
 ## Getting Started
 
 To get started with this project, follow these steps:
@@ -83,57 +82,88 @@ To get started with this project, follow these steps:
    
 ## Usage
 
-### Training
+There is an implementation for classification and segmentation.
 
-For training, you can use the following command:
-```bash
-  python trainer.py -m <model_name> -e <epochs> -pt <self> -lr <learning_rate> -n <name>
-```  
+### Classification
 
-- **model_name**: Name of the model to use. Currently, the options are: `efficientnet`and `resnet18`.
-- **epochs**: Number of epochs to train the model.
-- **self**: Use a self model. Options: `True` or `False`.
-- **learning_rate**: Learning rate to use in the training process.
-- **name**: Name of the model to save the weights and the results.
+For classification run the [main.py](src/classification/main.py) script and an
+interactive menu will appear.
 
-All the results will be saved in this path `~/Documents/training_results/<name>`.
+![](figures/mainUi.png)
 
-### Testing
+#### Mode
+- **Train:** To make a fine-tuning of the model.
+- **Metrics**: To evaluate the model with the dataset and obtain the confusion matrix
+f1, recall and precision.
+- **Local Inference (in development)**: To make inference locally with the model.
+- **Live Inference (in development)**: To make inference with the webcam or other stream source.
 
-You have to options for testing the models:
+#### Model Name
+Select the model to use. At the moment only EfficientNet and ResNet18 are available.
 
-1. Visualize each image with the predictions:      
+#### Weights
+Select the weights to use. For the model.
 
-    ```bash
-    python inferenceImage.py -m <model_name> -w <weights_path>
-    ```
-2. Obtain all the metrics for the test dataset:
+#### Dataset 
 
-    ```bash
-    python metrics.py -m <model_name> -w <weights_path>
-    ```
-   
-You will also a get a plot with the confusion matrix.
-   
-## Live inference
-You can use your webcam to make live inference with the models you've trained. We have two options:
+Select the folder where the dataset is saved.
 
-### Local inference
+#### Class list: 
 
-With [live-inference-local.py](src/live-inference-local.py). You can use the following command:
+Write the classes to use separated by commas. For example, person,nonperson
 
-```bash
-python live-inference-local.py -c <camera_port> -s <window_size> -m <model_name> -w <weights_path>
-```
+#### Output
 
-### Web streaming inference
+Select the folder where the output will be saved. Like the model weights, the confusion matrix, labeled images, etc.
 
-With [live-inference-web.py](src/live-inference-stream.py). You can use the following command:
+#### Video input for live inference
 
-```bash
-python live_inference_stream.py -c <camera_port> -s <window_size> -m <model_name> -w <weights_path>
-```
-Then you can access to the streaming in your browser with this url: `http://<ip>:5000/`
+Select the video input to use for live inference. It can be a webcam, video file, rtsp, etc.
+
+#### Epochs
+
+Number of epochs to train the model.
+
+#### Learning rate
+
+Learning rate to train the model.
+
+#### Save images
+
+If selected, the images will be saved in the output folder.
+
+#### Visualize images
+
+If selected, the images will be shown in the screen when local inference.
+
+#### Pretrained 
+
+If selected, the model will be loaded with the pretrained weights for training.
+
+#### Fine tune
+
+If selected, the model will be fine-tuned with the dataset.
+
+#### Launch button
+
+When all the parameters are selected, press the launch button to start the process.
+
+
+#### Log screen
+
+The log screen will show the progress of the process (when finished).
+
+
+### Segmentation
+
+The segmentation is in development. The [main.py](src/segmentation/main.py) script is not finished yet.
+But you can try yolo locally with the [yolo.py](src/segmentation/yolo.py) script.
+Or you can try the [yoloweb.py](src/segmentation/yoloweb.py) script for live inference in a web server.
+
+
+
+
+
 
 
 
