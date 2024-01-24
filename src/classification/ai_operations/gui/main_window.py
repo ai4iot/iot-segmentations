@@ -1,23 +1,28 @@
 import os
+import pickle
+import subprocess
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QComboBox, QCheckBox, \
-    QGridLayout, QFileDialog, QMessageBox, QProgressBar
-from flask import Flask
+    QGridLayout, QFileDialog, QMessageBox, QProgressBar, QMainWindow
 
 from ..models import ModelBuilder
 from ..tools import LogWidget
 import logging
 
-app = Flask(__name__)
 
-class MainMenu(QWidget):
+class MainMenu(QMainWindow):
     def __init__(self):
         super().__init__()
         self.resize(900, 600)
 
         self.setWindowTitle("Main Menu")
         self.setWindowIcon(QIcon('icon.png'))
+
+        central_widget = QWidget(self)
+        self.setCentralWidget(central_widget)
+
+        main_layout = QGridLayout(central_widget)
 
         # Default values
         self.log_widget = LogWidget()
@@ -100,7 +105,7 @@ class MainMenu(QWidget):
 
         # Text input for Class List
         class_list_label = QLabel("Class List:")
-        self.class_list = QLineEdit("Class 1, Class 2, Class 3, Class 4, Class 5")
+        self.class_list = QLineEdit("nonperson,person")
 
         # Launch button
         self.launch_button = QPushButton("Launch")
@@ -161,7 +166,9 @@ class MainMenu(QWidget):
 
         layout.addWidget(self.log_widget, 15, 0, 1, 2)
 
-        self.setLayout(layout)
+        main_layout.addLayout(layout, 0, 0)
+
+        central_widget.setLayout(main_layout)
 
     def open_weights_dialog(self):
         options = QFileDialog.Options()
@@ -180,6 +187,92 @@ class MainMenu(QWidget):
         directory = QFileDialog.getExistingDirectory(self, "Select Directory")
         if directory:
             self.output_entry.setText(directory)
+
+    def launch_button_clicked(self):
+        self.model_name = self.model_name_combo.currentText()
+        self.mode = self.mode_combo.currentText()
+        self.weights_path = self.weights_entry.text()
+        self.dataset_path = self.dataset_entry.text()
+        self.output_path = self.output_entry.text()
+        self.image_input_path = self.image_input_entry.text()
+        self.epochs = self.epochs_entry.text()
+        self.learning_rate = self.learning_rate_entry.text()
+        self.save_images_checked = self.save_images_checkbox.isChecked()
+        self.visualize_checked = self.visualize_checkbox.isChecked()
+        self.pretrained_checked = self.pretrained_checkbox.isChecked()
+        self.fine_tune_checked = self.fine_tune_checkbox.isChecked()
+
+        message = f"Model: {self.model_name}\nMode: {self.mode}\nWeights Path: {self.weights_path}\nDataset Path: {self.dataset_path}\n" \
+                  f"Output Path: {self.output_path}\nImage Input Path: {self.image_input_path}\nEpochs: {self.epochs}\n" \
+                  f"Learning Rate: {self.learning_rate}\nSave Images: {self.save_images_checked}\nVisualize: {self.visualize_checked}\n" \
+                  f"Pretrained: {self.pretrained_checked}\nFine-tune: {self.fine_tune_checked}"
+
+        QMessageBox.information(self, "Launch Info", message)
+
+        class_names = [name for name in os.listdir(self.dataset_path) if
+                       os.path.isdir(os.path.join(self.dataset_path, name))]
+        num_classes = len(class_names)
+
+        model = ModelBuilder(
+            name=self.model_name,
+            pretrained=self.pretrained_checked,
+            fine_tune=self.fine_tune_checked,
+            num_classes=num_classes,
+            model_name=self.model_name,
+            weights=self.weights_path,
+        )
+
+        if self.mode.lower() == 'train':
+            from ..models import Trainer
+            from ..tools import DataPreparation
+
+            data_prep = DataPreparation(
+                root_dir=self.dataset_path,
+                pretrained=self.pretrained_checked,
+            )
+
+            trainer = Trainer(
+                data_preparation=data_prep,
+                model=model,
+                learning_rate=float(self.learning_rate),
+                epochs=int(self.epochs),
+            )
+
+            trainer.run()
+
+        elif self.mode.lower() == 'metrics':
+
+            from ..inference import Metrics
+
+            metrics = Metrics(
+                model_builder=model,
+                input_dir=self.dataset_path,
+                output_dir=self.output_path
+            )
+
+            metrics.obtain_metrics()
+
+        elif self.mode.lower() == 'web inference':
+
+            classes = self.extract_list()
+
+            arguments = self.image_input_path.strip('\x00') +'@'+ '-'.join(classes) +'@'+ self.model_name.strip('\x00')+'@'+ str(self.pretrained_checked)+'@'+ str(self.fine_tune_checked)+'@'+ str(num_classes)+'@'+ self.model_name.strip('\x00')+'@'+ self.weights_path.strip('\x00')
+            subprocess.run(['python', 'ai_operations/inference/live_inference_stream.py',
+                            arguments])
+
+    def extract_list(self):
+        input_text = self.class_list.text()
+
+        try:
+            extracted_list = [item.strip('\x00') for item in input_text.split(',')]
+            return extracted_list
+        except Exception as e:
+            logging.error(f"Error extracting list: {e}")
+            return None
+
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        logging.shutdown()
 
     def handle_mode_change(self, index):
         # Determine the selected mode
@@ -249,92 +342,3 @@ class MainMenu(QWidget):
             self.pretrained_checkbox.setEnabled(False)
             self.learning_rate_entry.setEnabled(False)
             self.fine_tune_checkbox.setEnabled(False)
-
-    def launch_button_clicked(self):
-        self.model_name = self.model_name_combo.currentText()
-        self.mode = self.mode_combo.currentText()
-        self.weights_path = self.weights_entry.text()
-        self.dataset_path = self.dataset_entry.text()
-        self.output_path = self.output_entry.text()
-        self.image_input_path = self.image_input_entry.text()
-        self.epochs = self.epochs_entry.text()
-        self.learning_rate = self.learning_rate_entry.text()
-        self.save_images_checked = self.save_images_checkbox.isChecked()
-        self.visualize_checked = self.visualize_checkbox.isChecked()
-        self.pretrained_checked = self.pretrained_checkbox.isChecked()
-        self.fine_tune_checked = self.fine_tune_checkbox.isChecked()
-
-        message = f"Model: {self.model_name}\nMode: {self.mode}\nWeights Path: {self.weights_path}\nDataset Path: {self.dataset_path}\n" \
-                  f"Output Path: {self.output_path}\nImage Input Path: {self.image_input_path}\nEpochs: {self.epochs}\n" \
-                  f"Learning Rate: {self.learning_rate}\nSave Images: {self.save_images_checked}\nVisualize: {self.visualize_checked}\n" \
-                  f"Pretrained: {self.pretrained_checked}\nFine-tune: {self.fine_tune_checked}"
-
-        QMessageBox.information(self, "Launch Info", message)
-
-        class_names = [name for name in os.listdir(self.dataset_path) if
-                       os.path.isdir(os.path.join(self.dataset_path, name))]
-        num_classes = len(class_names)
-
-        model = ModelBuilder(
-            name=self.model_name,
-            pretrained=self.pretrained_checked,
-            fine_tune=self.fine_tune_checked,
-            num_classes=num_classes,
-            model_name=self.model_name,
-            weights=self.weights_path,
-        )
-
-        if self.mode.lower() == 'train':
-            from ..models import Trainer
-            from ..tools import DataPreparation
-
-            data_prep = DataPreparation(
-                root_dir=self.dataset_path,
-                pretrained=self.pretrained_checked,
-            )
-
-            trainer = Trainer(
-                data_preparation=data_prep,
-                model=model,
-                learning_rate=float(self.learning_rate),
-                epochs=int(self.epochs),
-            )
-
-            trainer.run()
-
-        elif self.mode.lower() == 'metrics':
-
-            from ..inference import Metrics
-
-            metrics = Metrics(
-                model_builder=model,
-                input_dir=self.dataset_path,
-                output_dir=self.output_path
-            )
-
-            metrics.obtain_metrics()
-
-        elif self.mode.lower() == 'web inference':
-            classes = self.extract_list()
-
-            from ..inference import WebInference
-
-            web_inference = WebInference(
-                model_builder=model,
-            )
-
-            app.run(host='0.0.0.0', port=5000, debug=False)
-
-    def extract_list(self):
-        input_text = self.class_list.text()
-
-        try:
-            extracted_list = [item.strip() for item in input_text.split(',')]
-            return extracted_list
-        except Exception as e:
-            logging.error(f"Error extracting list: {e}")
-            return None
-
-    def closeEvent(self, event):
-        super().closeEvent(event)
-        logging.shutdown()

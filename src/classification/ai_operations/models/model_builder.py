@@ -14,7 +14,6 @@ class ModelBuilder:
         self.fine_tune = fine_tune
         self.num_classes = num_classes
         self.model_name = model_name
-        self.model_name = model_name
         self.weights = weights
         self.device = device
         self.model = self.build_model()
@@ -81,3 +80,14 @@ class ModelBuilder:
             logging.info('Freezing hidden layers...')
             for params in self.model.parameters():
                 params.requires_grad = False
+
+    def __dict__(self):
+        # Return a dictionary with attribute names as keys and their values
+        return {
+            'model_name': self.model_name,
+            'pretrained': self.pretrained,
+            'fine_tune': self.fine_tune,
+            'num_classes': self.num_classes,
+            'weights': self.weights,
+            'device': self.device
+        }
