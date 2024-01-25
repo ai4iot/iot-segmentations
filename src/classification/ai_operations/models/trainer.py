@@ -137,6 +137,7 @@ class Trainer(QObject):
 
         """
         # Load the training and validation data.
+        print(self.model_builder.device)
         self.model_builder.model.to(self.device)
         dataset_train, dataset_valid, dataset_classes = self.data_preparation.get_datasets()
         logging.info('Dataset loaded')

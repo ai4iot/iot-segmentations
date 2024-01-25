@@ -11,6 +11,8 @@ import os
 
 from src.classification.ai_operations.inference import Metrics
 
+
+
 if __name__ == '__main__':
 
     # model = ModelBuilder(name='efficientnet_b0', pretrained=False, fine_tune=False, num_classes=2)
@@ -18,7 +20,8 @@ if __name__ == '__main__':
     # metrics = Metrics(model_builder=model)
     # metrics.obtain_metrics()
 
-    #os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = '/home/ams/anaconda3/envs/efficient-net/lib/python3.8/site-packages/cv2/qt/plugins/platforms'
+    os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = '/home/ams/anaconda3/envs/efficient-net/lib/python3.8/site-packages/cv2/qt/plugins/platforms'
+
     app = QApplication(sys.argv)
     main_window = MainMenu()
     main_window.show()
