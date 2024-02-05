@@ -8,9 +8,10 @@ import torch.optim as optim
 import torch.nn as nn
 from tqdm import tqdm  # Importing tqdm for progress bars
 from io import StringIO
+import wandb
 
-class Trainer(QObject):
 
+class Trainer:
     """
     Trainer class for training and validating a neural network model.
 
@@ -30,7 +31,6 @@ class Trainer(QObject):
 
     """
 
-
     def __init__(self, data_preparation: DataPreparation, model: ModelBuilder,
                  device='cuda' if torch.cuda.is_available() else 'cpu',
                  criterion=nn.CrossEntropyLoss(), learning_rate=0.001, epochs=10, output_dir='../../runs'):
@@ -47,9 +47,6 @@ class Trainer(QObject):
         self.criterion = criterion
         self.device = device
         self.output_dir = output_dir
-
-
-
 
     def _train(self, trainloader):
         """
@@ -91,8 +88,9 @@ class Trainer(QObject):
         logging.info(tqdm_output.getvalue())
         epoch_loss = train_running_loss / counter
         epoch_acc = 100. * (train_running_correct / len(trainloader.dataset))
-        return epoch_loss, epoch_acc
+        wandb.log({"train_loss": epoch_loss, "train_acc": epoch_acc})
 
+        return epoch_loss, epoch_acc
 
     def _validate(self, testloader):
         """
@@ -129,6 +127,7 @@ class Trainer(QObject):
         # Loss and accuracy for the complete epoch.
         epoch_loss = valid_running_loss / counter
         epoch_acc = 100. * (valid_running_correct / len(testloader.dataset))
+        wandb.log({"valid_loss": epoch_loss, "valid_acc": epoch_acc})
         return epoch_loss, epoch_acc
 
     def run(self):
@@ -188,3 +187,4 @@ class Trainer(QObject):
         ModelUtils.save_plots(train_acc=train_acc, valid_acc=valid_acc, train_loss=train_loss, valid_loss=valid_loss,
                               pretrained=self.data_preparation.pretrained, model_name=self.model_builder.model_name,
                               directory=direc)
+        wandb.finish()

@@ -1,6 +1,7 @@
 import os
 import pickle
 import subprocess
+import wandb
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QComboBox, QCheckBox, \
@@ -209,6 +210,10 @@ class MainMenu(QMainWindow):
 
         QMessageBox.information(self, "Launch Info", message)
 
+
+
+
+
         class_names = [name for name in os.listdir(self.dataset_path) if
                        os.path.isdir(os.path.join(self.dataset_path, name))]
         num_classes = len(class_names)
@@ -225,6 +230,23 @@ class MainMenu(QMainWindow):
         if self.mode.lower() == 'train':
             from ..models import Trainer
             from ..tools import DataPreparation
+
+            wandb.init(
+                # set the wandb project where this run will be logged
+                project="IoT Segmentation",
+
+                # track hyperparameters and run metadata
+                config={
+                    "arquitecture": self.model_name,
+                    "pretrained": self.pretrained_checked,
+                    "fine_tune": self.fine_tune_checked,
+                    "dataset": self.dataset_path.split('/')[-1],
+                    "epochs": self.epochs,
+                    "learning_rate": self.learning_rate,
+
+                }
+            )
+
 
             data_prep = DataPreparation(
                 root_dir=self.dataset_path,
