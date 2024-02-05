@@ -1,5 +1,4 @@
 import os
-import pickle
 import subprocess
 import wandb
 
@@ -8,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QComboBox, 
     QGridLayout, QFileDialog, QMessageBox, QProgressBar, QMainWindow
 
 from ..models import ModelBuilder
-from ..tools import LogWidget
+from .log_widget import LogWidget
 import logging
 
 

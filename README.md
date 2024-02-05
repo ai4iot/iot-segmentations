@@ -89,7 +89,7 @@ There is an implementation for classification and segmentation.
 For classification run the [main.py](src/classification/main.py) script and an
 interactive menu will appear.
 
-![](figures/mainUi.png)
+![](docs/figures/mainUi.png)
 
 #### Mode
 - **Train:** To make a fine-tuning of the model.

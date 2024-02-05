@@ -1,4 +1,3 @@
-from PyQt5.QtCore import QTimer, pyqtSignal, QThread
 from PyQt5.QtWidgets import QTextEdit
 
 
