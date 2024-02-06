@@ -1,26 +1,13 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
-
-from args import get_args
-import os
-from ai_operations.models import ModelBuilder
-import logging
 from ai_operations.gui import MainMenu
 import os
 
-from src.classification.ai_operations.inference import Metrics
-
-
-
 if __name__ == '__main__':
-
-    # model = ModelBuilder(name='efficientnet_b0', pretrained=False, fine_tune=False, num_classes=2)
-    #
-    # metrics = Metrics(model_builder=model)
-    # metrics.obtain_metrics()
-
-    os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = '/home/ams/anaconda3/envs/efficient-net/lib/python3.8/site-packages/cv2/qt/plugins/platforms'
+    os.environ[
+        "QT_QPA_PLATFORM_PLUGIN_PATH"] = ('/home/ams/anaconda3/envs/efficient-net/lib/python3.8/site-packages/cv2/qt'
+                                          '/plugins/platforms')
 
     app = QApplication(sys.argv)
     main_window = MainMenu()
@@ -75,14 +62,4 @@ if __name__ == '__main__':
     #
     #     metrics.obtain_metrics()
 
-
-#TODO: poner en builder model la opcion de inferencia entonces asi no lo tengoq ue poner cada vez que lo hago y que devuelva los outputs, tambien camiar el nomnre.
-
-    #elif args.mode == 'live':
-
-
-
-
-
-
-
+# TODO: poner en builder model la opcion de inferencia entonces asi no lo tengoq ue poner cada vez que lo hago y que devuelva los outputs, tambien camiar el nomnre.
