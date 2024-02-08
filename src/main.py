@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
-from ai_operations.gui import MainMenu
+from src.gui import MainMenu
 import os
 
 if __name__ == '__main__':
@@ -63,3 +63,4 @@ if __name__ == '__main__':
     #     metrics.obtain_metrics()
 
 # TODO: poner en builder model la opcion de inferencia entonces asi no lo tengoq ue poner cada vez que lo hago y que devuelva los outputs, tambien camiar el nomnre.
+# TODO: modifica readme para explicar wandb

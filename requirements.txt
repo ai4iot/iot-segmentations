@@ -1,0 +1,14 @@
+Flask==3.0.2
+imutils==0.5.4
+matplotlib==3.7.4
+model==0.6.0
+numpy==1.24.4
+opencv_python==4.9.0.80
+paho_mqtt==1.6.1
+PyQt5==5.15.10
+PyQt5_sip==12.13.0
+scikit_learn==1.3.2
+torch==2.1.2
+torchvision==0.16.2
+tqdm==4.66.1
+ultralytics==8.1.6

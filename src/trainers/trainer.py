@@ -1,7 +1,5 @@
-from PyQt5.QtCore import QObject
-
-from .model_builder import ModelBuilder  # Importing ModelBuilder from the sibling module
-from ..tools import DataPreparation, ModelUtils  # Importing DataPreparation and ModelUtils from the parent module
+from src.models.classification.model_builder import ModelBuilder  # Importing ModelBuilder from the sibling module
+from src.tools import DataPreparation, ModelUtils  # Importing DataPreparation and ModelUtils from the parent module
 import torch
 import logging
 import torch.optim as optim

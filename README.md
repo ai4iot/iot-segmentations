@@ -86,7 +86,7 @@ There is an implementation for classification and segmentation.
 
 ### Classification
 
-For classification run the [main.py](src/classification/main.py) script and an
+For classification run the [main.py](src/main.py) script and an
 interactive menu will appear.
 
 ![](docs/figures/mainUi.png)
@@ -157,8 +157,8 @@ The log screen will show the progress of the process (when finished).
 ### Segmentation
 
 The segmentation is in development. The [main.py](src/segmentation/main.py) script is not finished yet.
-But you can try yolo locally with the [yolo.py](src/segmentation/yolo.py) script.
-Or you can try the [yoloweb.py](src/segmentation/yoloweb.py) script for live inference in a web server.
+But you can try yolo locally with the [yolo.py](src/models/object_detection/yolo.py) script.
+Or you can try the [yoloweb.py](src/models/object_detection/yoloweb.py) script for live inference in a web server.
 
 
 
