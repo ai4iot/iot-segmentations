@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import glob as glob
 import os
-from ..models import ModelBuilder
+from src.models import ModelBuilder
 import argparse
 import logging
 

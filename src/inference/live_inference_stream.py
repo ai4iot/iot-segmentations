@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.classification.ai_operations.models import ModelBuilder
-from src.classification.ai_operations.tools import ModelUtils
+from src.models import ModelBuilder
+from src.tools import ModelUtils
 
 import sys
 import cv2

@@ -6,7 +6,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QComboBox, QCheckBox, \
     QGridLayout, QFileDialog, QMessageBox, QProgressBar, QMainWindow
 
-from ..models import ModelBuilder
+from src.models import ModelBuilder
 from .log_widget import LogWidget
 import logging
 
@@ -227,7 +227,7 @@ class MainMenu(QMainWindow):
         )
 
         if self.mode.lower() == 'train':
-            from ..models import Trainer
+            from src.models import Trainer
             from ..tools import DataPreparation
 
             wandb.init(

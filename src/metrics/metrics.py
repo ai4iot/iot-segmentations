@@ -5,8 +5,8 @@ import glob as glob
 import os
 import matplotlib
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, precision_score, recall_score, f1_score
-from ..models import ModelBuilder
-from ..tools import ModelUtils
+from src.models import ModelBuilder
+from src.tools import ModelUtils
 import logging
 
 matplotlib.use('Agg')
