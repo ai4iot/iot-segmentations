@@ -30,7 +30,7 @@ class MainMenu(QMainWindow):
         self.model_name = 'efficientnet_b0'
         self.mode = 'train'
         self.weights_path = './ai_operations/models/person_nonperson_efficientnet.pth'
-        self.dataset_path = '../../input/test/esp-camera'
+        self.dataset_path = '../input/test/esp-camera'
         self.output_path = '../../runs'
         self.image_input_path = '0'  # Default value for QLineEdit
         self.epochs = 10
