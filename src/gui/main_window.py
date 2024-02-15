@@ -236,7 +236,7 @@ class MainMenu(QMainWindow):
 
                 # track hyperparameters and run metadata
                 config={
-                    "arquitecture": self.model_name,
+                    "architecture": self.model_name,
                     "pretrained": self.pretrained_checked,
                     "fine_tune": self.fine_tune_checked,
                     "dataset": self.dataset_path.split('/')[-1],

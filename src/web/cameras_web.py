@@ -93,15 +93,11 @@ def generate_frames(camera_url):
 
                 i = i + 1
 
-
         # Encode frame as JPEG image
+        # TODO: Añadir flag para qe se guarden las imágenes en un directorio
         (flag, encodedImage) = cv2.imencode(".jpg", frame)
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
                bytearray(encodedImage) + b'\r\n')
-
-    cap.release()
-    cv2.destroyAllWindows()
-    return 0
 
 
 @app.route('/video_feed/<int:camera_index>')

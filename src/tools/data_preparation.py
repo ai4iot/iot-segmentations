@@ -85,7 +85,7 @@ class DataPreparation:
         Returns:
         - dataset_train: Training dataset.
         - dataset_valid: Validation dataset.
-        - dataset.classes: Class names.
+        - Dataset.classes: Class names.
         """
         dataset = datasets.ImageFolder(
             self.root_dir,

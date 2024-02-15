@@ -1,4 +1,4 @@
-Flask==3.0.2
+Flask~=3.0.1
 imutils==0.5.4
 matplotlib==3.7.4
 model==0.6.0
@@ -12,3 +12,8 @@ torch==2.1.2
 torchvision==0.16.2
 tqdm==4.66.1
 ultralytics==8.1.6
+
+wandb~=0.16.2
+opencv-python~=4.9.0.80
+paho-mqtt~=1.6.1
+scikit-learn~=1.3.2

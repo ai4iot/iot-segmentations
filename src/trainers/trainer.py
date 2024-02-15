@@ -42,6 +42,7 @@ class Trainer:
         self.epochs = epochs
         self.model_builder = model
         self.optimizer = optim.Adam(self.model_builder.model.parameters(), lr=self.learning_rate)
+        # TODO: Add support for other optimizers.
         self.criterion = criterion
         self.device = device
         self.output_dir = output_dir
