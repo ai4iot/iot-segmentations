@@ -20,7 +20,7 @@ def guardar_mensaje(mensaje):
     conexion.commit()
 
 # Conexión a la base de datos y creación de la tabla
-conexion = sqlite3.connect('mensajes.db')
+conexion = sqlite3.connect('mensajes1.db')
 cursor = conexion.cursor()
 cursor.execute('''CREATE TABLE IF NOT EXISTS mensajes (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

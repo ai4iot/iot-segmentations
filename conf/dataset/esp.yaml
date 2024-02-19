@@ -1,4 +1,6 @@
-dataset:
-  - name: esp_camera
-  - batch_size: 16
-  - num_workers: 6
+root_dir: 'esp_camera'
+valid_split: '../../../../input/person_dataset'
+image_size: 224
+batch_size: 32
+num_workers: 4
+pretrained: True

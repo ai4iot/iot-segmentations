@@ -15,7 +15,7 @@ mqtt_messages_per_second = 2
 mqtt_message_timer = 0
 
 
-def publish_mqtt_message(camera_url, xmin, ymin, xmax, ymax):
+def publish_mqtt_message(camera_url, xmin, ymin, xmax, ymax, time_stamp):
     global mqtt_message_timer
     global mqtt_messages_per_second
     global mqtt_topic
@@ -26,7 +26,7 @@ def publish_mqtt_message(camera_url, xmin, ymin, xmax, ymax):
     time_interval = 1 / mqtt_messages_per_second
 
     if time_elapsed >= time_interval:
-        message_payload = f'{camera_url.split("@")[-1].split(":")[0]}: Person detected - {xmin}, {ymin}, {xmax}, {ymax}'
+        message_payload = f'{camera_url.split("@")[-1].split(":")[0]}: Person detected - {xmin}, {ymin}, {xmax}, {ymax}, {time_stamp}'
         client.publish(mqtt_topic, message_payload)
         mqtt_message_timer = current_time
 
@@ -62,6 +62,7 @@ def generate_frames(camera_url):
     cap = cv2.VideoCapture(camera_url)
     while True:
         ret, frame = cap.read()
+        time = cap.get(cv2.CAP_PROP_POS_MSEC)
         results = model.predict(frame, stream=True)
 
         # Process the detected objects
@@ -89,7 +90,7 @@ def generate_frames(camera_url):
                 if names[int(c)] == 'person':
                     print("Alert")
                     # Publish MQTT message if a person is detected
-                    publish_mqtt_message(camera_url, xmin, ymin, xmax, ymax)
+                    publish_mqtt_message(camera_url, xmin, ymin, xmax, ymax, time)
 
                 i = i + 1
 
